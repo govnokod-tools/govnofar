@@ -20,3 +20,5 @@ FarSDK -- FarSDK
 Смотреть текст F3 или F4. 
 
 ![Govnokod](https://s10.postimg.org/4thsf8vx5/govn.png)
+
+![Govnokod2](https://s10.postimg.org/61nr1d3l5/govn2.png)
