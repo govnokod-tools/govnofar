@@ -22,15 +22,11 @@ static struct PluginStartupInfo g_info;
 static BOOL broken;
 
 
-struct file_and_message
+struct govno_panel
 {
 	struct PluginPanelItem* file_items;
 	struct govno_message_header* message_headers;
 };
-
-// All of that shit is not thread safe at all, but it seems that not an issue in Far
-static struct file_and_message files_and_messages[MAX_PANELS];
-static int panels_opened = 0;
 
 
 // Init plugin, FAR lanches it at the start
@@ -87,43 +83,23 @@ HANDLE WINAPI OpenW(const struct OpenInfo* info)
 {
 	const GUID menu_item_guid = govno_menu_item_guid;
 	assert(IsEqualGUID(info->Guid, &menu_item_guid));
-
-	if (panels_opened > MAX_PANELS)
+	struct govno_panel* result = calloc(1, sizeof(struct govno_panel));
+	if (! result)
 	{
-		return NULL; // Can't open new more panel
+		//TODO: LOG
+		return 0;
 	}
-
-	// Govno here is because I can't return 0. So I return panel number, but since in C arrays are 0 based I will need to substract it before access
-	return (HANDLE)++panels_opened;
-}
-
-void FreeDataForPanel(const int panel)
-{
-	if (panel < 0 || panel >= MAX_PANELS) //Sanity check
-	{
-		return;
-	}
-
-	if (files_and_messages[panel].file_items)
-	{
-		free(files_and_messages[panel].file_items);
-		files_and_messages[panel].file_items = NULL;
-	}
-	if (files_and_messages[panel].message_headers)
-	{
-		free(files_and_messages[panel].message_headers);
-		files_and_messages[panel].message_headers = NULL;
-	}
+	return result;
 }
 
 void WINAPI ClosePanelW(const struct ClosePanelInfo* info)
 {
 	assert(info->StructSize == sizeof(struct ClosePanelInfo));
 
-	// If they didn't call FreeFindDataW
-
-	FreeDataForPanel(panels_opened - 1);
-	panels_opened--;
+	if (info->hPanel)
+	{
+		free(info->hPanel);
+	}
 }
 
 
@@ -165,12 +141,13 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 	assert(info->StructSize == sizeof(struct GetFindDataInfo));
 	int fetched;
 
-	const int current_panel = ((int)info->hPanel) - 1;
-	struct file_and_message files_and_message = files_and_messages[current_panel];
-	files_and_message.file_items = calloc(MESSAGES_TO_FETCH, sizeof(struct PluginPanelItem));
-	files_and_message.message_headers = calloc(MESSAGES_TO_FETCH, sizeof(struct govno_message_header));
+	struct govno_panel* p_panel = info->hPanel;
+	assert(p_panel);
 
-	if (GovnoGet(MESSAGES_TO_FETCH, files_and_message.message_headers, &fetched) != 0)
+	p_panel->file_items = calloc(MESSAGES_TO_FETCH, sizeof(struct PluginPanelItem));
+	p_panel->message_headers = calloc(MESSAGES_TO_FETCH, sizeof(struct govno_message_header));
+
+	if (GovnoGet(MESSAGES_TO_FETCH, p_panel->message_headers, &fetched) != 0)
 	{
 		//TODO: LOG
 		return 0;
@@ -179,24 +156,32 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 	assert(fetched <= MESSAGES_TO_FETCH);
 	for (int i = 0; i < fetched; i++)
 	{
-		const long id = (files_and_message.message_headers + i)->id;
+		const long id = (p_panel->message_headers + i)->id;
 		// TODO: Use userdata instead, do not forget to free it
-		(files_and_message.file_items + i)->AllocationSize = id;
-		(files_and_message.file_items + i)->FileName = (files_and_message.
-			message_headers + i)->nick;
-		(files_and_message.file_items + i)->Description = (files_and_message.
-			message_headers + i)->message;
+		(p_panel->file_items + i)->AllocationSize = id;
+		(p_panel->file_items + i)->FileName = (p_panel->message_headers + i)->nick;
+		(p_panel->file_items + i)->Description = (p_panel->message_headers + i)->message;
 	}
 
 	info->ItemsNumber = fetched;
-	info->PanelItem = files_and_message.file_items;
+	info->PanelItem = p_panel->file_items;
 
 	return 1;
 }
 
 void WINAPI FreeFindDataW(const struct FreeFindDataInfo* info)
 {
-	FreeDataForPanel((int)info->hPanel - 1);
+	if (info->hPanel)
+	{
+		if (((struct govno_panel*)info->hPanel)->file_items)
+		{
+			free(((struct govno_panel*)info->hPanel)->file_items);
+		}
+		if (((struct govno_panel*)info->hPanel)->message_headers)
+		{
+			free(((struct govno_panel*)info->hPanel)->message_headers);
+		}
+	}
 }
 
 
@@ -216,7 +201,7 @@ intptr_t WINAPI GetFilesW(struct GetFilesInfo* info)
 	for (size_t i = 0; i < info->ItemsNumber; i++)
 	{
 		const struct PluginPanelItem item = info->PanelItem[i];
-		const wchar_t* file_name = item.FileName;		
+		const wchar_t* file_name = item.FileName;
 		swprintf_s(dest_file_name, max_dest_path_len_chars, L"%s\\%s%llu.txt", dest_path, file_name, item.AllocationSize);
 		FILE* file;
 		_wfopen_s(&file, dest_file_name, L"w,ccs=UNICODE");
@@ -237,14 +222,4 @@ intptr_t WINAPI GetFilesW(struct GetFilesInfo* info)
 	}
 	_freea(dest_file_name);
 	return 1;
-}
-
-
-// Destructor
-void WINAPI ExitFARW(const struct ExitInfo* info)
-{
-	for (int i = 0; i < MAX_PANELS; i++)
-	{
-		FreeDataForPanel(i);
-	}
 }
