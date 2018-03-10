@@ -11,3 +11,10 @@ Govnotool её консольный клиент.
 libson либа для парса json
 Govnokod сам плагин
 FarSDK -- FarSDK
+
+Если просто хотите взять release:
+.dll копировать в ``"%APPDATA%\far manager\Profile\Plugins\Govnokod"`` или
+``c:\Program Files\Far Manager\Plugins\Govnokod``
+
+Запускать через ALT+F1 или ALT+2.
+Смотреть текст F3 или F4. 
