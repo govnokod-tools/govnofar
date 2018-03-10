@@ -26,6 +26,7 @@ struct govno_panel
 {
 	struct PluginPanelItem* file_items;
 	struct govno_message_header* message_headers;
+	WCHAR* description;
 };
 
 
@@ -132,8 +133,50 @@ void WINAPI GetOpenPanelInfoW(struct OpenPanelInfo* info)
 	//TODO: Close panel info
 }
 
-//ClosePanelW
 
+// Cleans HTML, allocs mem and makes p_dest pointing to it. Make sure to free it
+static void CleanHtml(const wchar_t* string_with_html, WCHAR** p_dest)
+{
+	const size_t string_len = wcslen(string_with_html);
+	// Alloc mem for the whole string_with_html, then realloc to real size.
+	*p_dest = malloc(sizeof(WCHAR) * string_len);
+	unsigned int pos_in_result = 0;
+	unsigned int html_stack_size = 0;
+	BOOL in_entity = FALSE;
+	for (size_t i = 0; i < string_len; i++)
+	{
+		const WCHAR src_char = string_with_html[i];;
+		switch (src_char)
+		{
+		case '&':
+			in_entity = TRUE;
+			break;
+		case ';':
+			in_entity = FALSE;
+			break;
+		case '<':
+			html_stack_size++;
+			break;
+		case '>':
+			html_stack_size--;
+			break;
+		default:
+			if (html_stack_size == 0 && !in_entity)
+			{
+				(*p_dest)[pos_in_result++] = src_char == '\n' ? ' ' : src_char;
+			}
+		}
+	}
+	*p_dest = realloc(*p_dest, sizeof(WCHAR) * (pos_in_result + 1));
+	assert(*p_dest);
+	(*p_dest)[pos_in_result] = 0;
+}
+
+// Clears full description stored un userdata
+static void CleanFullDesc(void* user_data, const struct FarPanelItemFreeInfo* Info)
+{
+	free(user_data);
+}
 
 // Get list of files
 intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
@@ -157,10 +200,21 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 	for (int i = 0; i < fetched; i++)
 	{
 		const long id = (p_panel->message_headers + i)->id;
+		struct PluginPanelItem* plugin_panel_item = (p_panel->file_items + i);
 		// TODO: Use userdata instead, do not forget to free it
-		(p_panel->file_items + i)->AllocationSize = id;
-		(p_panel->file_items + i)->FileName = (p_panel->message_headers + i)->nick;
-		(p_panel->file_items + i)->Description = (p_panel->message_headers + i)->message;
+		plugin_panel_item->AllocationSize = id;
+		plugin_panel_item->FileName = (p_panel->message_headers + i)->nick;
+		CleanHtml((p_panel->message_headers + i)->message, &(p_panel->description));
+		plugin_panel_item->Description = p_panel->description;
+
+		const size_t full_desc_len_bytes = (wcslen((p_panel->message_headers + i)->message) + 1) * sizeof(WCHAR);
+
+		// Store full desc (with html) in userdata
+		// +1 for terminating 0
+		plugin_panel_item->UserData.Data = malloc(full_desc_len_bytes);
+		memcpy_s(plugin_panel_item->UserData.Data, full_desc_len_bytes, (p_panel->message_headers + i)->message,
+		         full_desc_len_bytes);
+		plugin_panel_item->UserData.FreeData = &CleanFullDesc;
 	}
 
 	info->ItemsNumber = fetched;
@@ -180,6 +234,10 @@ void WINAPI FreeFindDataW(const struct FreeFindDataInfo* info)
 		if (((struct govno_panel*)info->hPanel)->message_headers)
 		{
 			free(((struct govno_panel*)info->hPanel)->message_headers);
+		}
+		if (((struct govno_panel*)info->hPanel)->description)
+		{
+			free(((struct govno_panel*)info->hPanel)->description);
 		}
 	}
 }
@@ -216,7 +274,7 @@ intptr_t WINAPI GetFilesW(struct GetFilesInfo* info)
 
 		fwrite(item.FileName, sizeof(WCHAR), wcslen(item.FileName), file);
 		fwrite(separator, sizeof(WCHAR), wcslen(separator), file);
-		fwrite(item.Description, sizeof(WCHAR), wcslen(item.Description), file);
+		fwrite(item.UserData.Data, sizeof(WCHAR), wcslen(item.UserData.Data), file);
 
 		fclose(file);
 	}
