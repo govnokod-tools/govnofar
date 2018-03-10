@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Govnoclient", "Govnoclient", "{09964FB4-6BFB-4493-8DDB-7FC2AACD7E63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GovnoFarPlugin", "GovnoFarPlugin", "{1455CD65-BB46-49B6-822A-6B6854ACBF73}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Govnolib", "GovnoClient\Govnolib\Govnolib.vcxproj", "{3539E668-B20B-4B10-A5B3-66B38707618D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GovnoTool", "GovnoClient\Govnotool\GovnoTool.vcxproj", "{CFED51E6-D788-46B8-9D4E-94EEFD391D32}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjson", "GovnoClient\libjson\libjson.vcxproj", "{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Govnokod", "GovnoFarPlugin\Govnokod\Govnokod.vcxproj", "{9469FD60-330D-4726-989E-14210AE1C0E4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FarSdk", "GovnoFarPlugin\FarSdk\FarSdk.vcxitems", "{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Debug|x64.ActiveCfg = Debug|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Debug|x64.Build.0 = Debug|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Debug|x86.ActiveCfg = Debug|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Debug|x86.Build.0 = Debug|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Release|x64.ActiveCfg = Release|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Release|x64.Build.0 = Release|x64
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Release|x86.ActiveCfg = Release|Win32
+		{3539E668-B20B-4B10-A5B3-66B38707618D}.Release|x86.Build.0 = Release|Win32
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Debug|x64.ActiveCfg = Debug|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Debug|x64.Build.0 = Debug|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Debug|x86.ActiveCfg = Debug|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Debug|x86.Build.0 = Debug|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Release|x64.ActiveCfg = Release|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Release|x64.Build.0 = Release|x64
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Release|x86.ActiveCfg = Release|Win32
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32}.Release|x86.Build.0 = Release|Win32
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Debug|x64.ActiveCfg = Debug|x64
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Debug|x64.Build.0 = Debug|x64
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Debug|x86.ActiveCfg = Debug|Win32
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Debug|x86.Build.0 = Debug|Win32
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Release|x64.ActiveCfg = Release|x64
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Release|x64.Build.0 = Release|x64
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Release|x86.ActiveCfg = Release|Win32
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377}.Release|x86.Build.0 = Release|Win32
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Debug|x64.ActiveCfg = Debug|x64
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Debug|x64.Build.0 = Debug|x64
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Debug|x86.Build.0 = Debug|Win32
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Release|x64.ActiveCfg = Release|x64
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Release|x64.Build.0 = Release|x64
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Release|x86.ActiveCfg = Release|Win32
+		{9469FD60-330D-4726-989E-14210AE1C0E4}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3539E668-B20B-4B10-A5B3-66B38707618D} = {09964FB4-6BFB-4493-8DDB-7FC2AACD7E63}
+		{CFED51E6-D788-46B8-9D4E-94EEFD391D32} = {09964FB4-6BFB-4493-8DDB-7FC2AACD7E63}
+		{B1D5A829-C0C1-45CB-8AD0-FE061B36D377} = {09964FB4-6BFB-4493-8DDB-7FC2AACD7E63}
+		{9469FD60-330D-4726-989E-14210AE1C0E4} = {1455CD65-BB46-49B6-822A-6B6854ACBF73}
+		{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7} = {1455CD65-BB46-49B6-822A-6B6854ACBF73}
+	EndGlobalSection
+EndGlobal
