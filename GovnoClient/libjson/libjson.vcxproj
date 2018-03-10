@@ -69,19 +69,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\libjson\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Inc;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\libjson\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Inc;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\libjson\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Inc;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\libjson\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Inc;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

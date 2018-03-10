@@ -69,20 +69,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\Govnolib\Inc;C:\Users\Link\far_plug\FarPlugin\GovnoFarPlugin\FarSdk;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\Govnolib\Inc;C:\Users\Link\far_plug\FarPlugin\GovnoFarPlugin\FarSdk;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\Govnolib\Inc;C:\Users\Link\far_plug\FarPlugin\GovnoFarPlugin\FarSdk;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Link\far_plug\FarPlugin\GovnoClient\Govnolib\Inc;C:\Users\Link\far_plug\FarPlugin\GovnoFarPlugin\FarSdk;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
