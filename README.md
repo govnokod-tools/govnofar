@@ -18,3 +18,5 @@ FarSDK -- FarSDK
 
 Запускать через ALT+F1 или ALT+2.
 Смотреть текст F3 или F4. 
+
+![Govnokod](https://s10.postimg.org/4thsf8vx5/govn.png)
