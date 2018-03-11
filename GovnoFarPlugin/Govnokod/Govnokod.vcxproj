@@ -70,19 +70,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GovnoClient\Govnolib\Inc;$(ProjectDir)Inc;$(ProjectDir)..\FarSdk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,6 +179,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Govnokod.c" />
+    <ClCompile Include="Settings.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Inc\Settings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <assert.h>
 #include <Strsafe.h>
+#include "Settings.h"
 
 
 // {6B463403-4B00-45EB-822E-F5B17B8BE774}
@@ -15,18 +16,24 @@ DEFINE_GUID(govno_plugin_guid,
 DEFINE_GUID(govno_menu_item_guid,
 	0x1a0af28e, 0x6340, 0x4248, 0x91, 0x2, 0xe1, 0x83, 0xc3, 0x38, 0xbc, 0x79);
 
-#define MAX_PANELS 2
 #define MESSAGES_TO_FETCH 50
 
 static struct PluginStartupInfo g_info;
 static BOOL broken;
-
+static govnosettings settings;
+static BYTE panels_opened = 0;
 
 struct govno_panel
 {
 	struct PluginPanelItem* file_items;
 	struct govno_message_header* message_headers;
 	WCHAR* description;
+};
+
+struct user_data
+{
+	long user_id;
+	WCHAR description; //Array of WCHARs nullterminated (take its address to get string)
 };
 
 
@@ -90,12 +97,31 @@ HANDLE WINAPI OpenW(const struct OpenInfo* info)
 		//TODO: LOG
 		return 0;
 	}
+	if (! panels_opened)
+	{
+		assert(!settings);
+		settings = LoadGovnoSettings(&g_info, govno_plugin_guid);
+		if (!settings)
+		{
+			//TODO: LOg
+			return 0;
+		}
+	}
+	panels_opened++;
+
 	return result;
 }
 
 void WINAPI ClosePanelW(const struct ClosePanelInfo* info)
 {
 	assert(info->StructSize == sizeof(struct ClosePanelInfo));
+	panels_opened--;
+	if (! panels_opened)
+	{
+		assert(settings);
+		FreeGovnoSettings(settings);
+		settings = NULL;
+	}
 
 	if (info->hPanel)
 	{
@@ -131,6 +157,16 @@ void WINAPI GetOpenPanelInfoW(struct OpenPanelInfo* info)
 	//TODO: Set keybar and other stuff
 
 	//TODO: Close panel info
+}
+
+intptr_t WINAPI DeleteFilesW(const struct DeleteFilesInfo* info)
+{
+	for (size_t i = 0; i < info->ItemsNumber; i++)
+	{
+		struct user_data* user_data = info->PanelItem[i].UserData.Data;
+		IgnoreGovnoUser(settings, user_data->user_id);
+	}
+	return 1;
 }
 
 
@@ -190,7 +226,10 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 	p_panel->file_items = calloc(MESSAGES_TO_FETCH, sizeof(struct PluginPanelItem));
 	p_panel->message_headers = calloc(MESSAGES_TO_FETCH, sizeof(struct govno_message_header));
 
-	if (GovnoGet(MESSAGES_TO_FETCH, p_panel->message_headers, &fetched) != 0)
+
+	assert(settings);
+	const WCHAR* nicks_to_ignore = GetListOfIgnoredGovnoUsers(settings);
+	if (GovnoGet(MESSAGES_TO_FETCH, p_panel->message_headers, &fetched, nicks_to_ignore) != 0)
 	{
 		//TODO: LOG
 		return 0;
@@ -201,20 +240,24 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 	{
 		const long id = (p_panel->message_headers + i)->id;
 		struct PluginPanelItem* plugin_panel_item = (p_panel->file_items + i);
-		// TODO: Use userdata instead, do not forget to free it
 		plugin_panel_item->AllocationSize = id;
+
 		plugin_panel_item->FileName = (p_panel->message_headers + i)->nick;
 		CleanHtml((p_panel->message_headers + i)->message, &(p_panel->description));
 		plugin_panel_item->Description = p_panel->description;
 
+		// +1 for terminating 0
 		const size_t full_desc_len_bytes = (wcslen((p_panel->message_headers + i)->message) + 1) * sizeof(WCHAR);
 
-		// Store full desc (with html) in userdata
-		// +1 for terminating 0
-		plugin_panel_item->UserData.Data = malloc(full_desc_len_bytes);
-		memcpy_s(plugin_panel_item->UserData.Data, full_desc_len_bytes, (p_panel->message_headers + i)->message,
+		// Store full desc (with html) in userdata		
+		struct user_data* user_data = malloc(full_desc_len_bytes + sizeof(long));
+		user_data->user_id = (p_panel->message_headers + i)->user_id;
+
+
+		memcpy_s(&(user_data->description), full_desc_len_bytes, (p_panel->message_headers + i)->message,
 		         full_desc_len_bytes);
 		plugin_panel_item->UserData.FreeData = &CleanFullDesc;
+		plugin_panel_item->UserData.Data = user_data;
 	}
 
 	info->ItemsNumber = fetched;
@@ -274,7 +317,12 @@ intptr_t WINAPI GetFilesW(struct GetFilesInfo* info)
 
 		fwrite(item.FileName, sizeof(WCHAR), wcslen(item.FileName), file);
 		fwrite(separator, sizeof(WCHAR), wcslen(separator), file);
-		fwrite(item.UserData.Data, sizeof(WCHAR), wcslen(item.UserData.Data), file);
+
+		const struct user_data* user_data = item.UserData.Data;
+
+
+		const WCHAR* const description = (const WCHAR* const)&(user_data->description);
+		fwrite(description, sizeof(WCHAR), wcslen(description), file);
 
 		fclose(file);
 	}

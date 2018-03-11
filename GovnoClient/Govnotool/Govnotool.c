@@ -28,7 +28,7 @@ int main()
 
 	int message_count = 0;
 
-	const int getResult = GovnoGet(MAX_MESSAGES, messages, &message_count);
+	const int getResult = GovnoGet(MAX_MESSAGES, messages, &message_count, L"1,2,3");
 	if (getResult != 0)
 	{
 		return fail("Can't get data", getResult);

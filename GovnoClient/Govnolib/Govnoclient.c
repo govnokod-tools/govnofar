@@ -3,8 +3,9 @@
 #include <Wininet.h>
 #include <assert.h>
 #include <stdint.h>
+#include <malloc.h>
 
-# define GOVNO_URL L"http://b.gcode.cx/ngk/api/comments"
+# define GOVNO_URL L"http://b.gcode.cx/ngk/api/comments?ignore="
 # define BUF_SIZE 4096
 
 
@@ -12,7 +13,8 @@ enum govno_message_type
 {
 	nick = 1,
 	message = 2,
-	id = 3
+	post_id = 3,
+	user_id = 4
 };
 
 struct govno_messages
@@ -47,7 +49,11 @@ static int _json_callback(void* userdata, const int type, const char* data, uint
 		}
 		else if (strcmp(data, "post_id") == 0)
 		{
-			p_govno_messages->type = id;
+			p_govno_messages->type = post_id;
+		}
+		else if (strcmp(data, "user_id") == 0)
+		{
+			p_govno_messages->type = user_id;
 		}
 		else
 		{
@@ -66,8 +72,10 @@ static int _json_callback(void* userdata, const int type, const char* data, uint
 			case message:
 				CopyString(p_header->message, data, GOVNO_MESS_LEN_WCHARS);
 				break;
-			case id:
+			case post_id:
 				p_header->id = strtol(data, &who_cares, 10);
+			case user_id:
+				p_header->user_id = strtol(data, &who_cares, 10);
 				break;
 			}
 		}
@@ -84,7 +92,8 @@ static int _json_callback(void* userdata, const int type, const char* data, uint
 	return 0;
 }
 
-DWORD GovnoGet(const int max_messages, struct govno_message_header* p_dest, int* messages_fetched)
+DWORD GovnoGet(const int max_messages, struct govno_message_header* p_dest, int* messages_fetched,
+               const WCHAR* nicks_to_ignore)
 {
 	assert(max_messages > 0);
 
@@ -96,14 +105,46 @@ DWORD GovnoGet(const int max_messages, struct govno_message_header* p_dest, int*
 	}
 
 
-	const HINTERNET result = InternetOpenUrl(inet, GOVNO_URL, NULL, 0, INTERNET_FLAG_NO_UI,
+	//?ignore: nicks_to_ignore
+	WCHAR* url = GOVNO_URL;
+	if (nicks_to_ignore)
+	{
+		static size_t govno_url_len_chars = 0;
+		if (govno_url_len_chars == 0)
+		{
+			govno_url_len_chars = wcslen(GOVNO_URL);
+		}
+
+		const size_t nicks_len_chars = wcslen(nicks_to_ignore);
+		const size_t buffer_for_nicks_chars = (nicks_len_chars + govno_url_len_chars + 1);
+
+		// I hope "if" braces do not create stack frame, I am not real C developer;)
+		url = _alloca(buffer_for_nicks_chars * sizeof(WCHAR));
+
+		//We're sure buffer is big enough (see _alloca), but we need to fool wcscpy_s
+		if (wcscpy_s(url, govno_url_len_chars + 1, GOVNO_URL) != 0)
+		{
+			//TODO: LOG
+			return -1;
+		}
+		if (wcscpy_s(url + govno_url_len_chars, nicks_len_chars + 1, nicks_to_ignore) != 0)
+		{
+			//TODO: LOG
+			return -1;
+		}
+	}
+
+	const HINTERNET result = InternetOpenUrl(inet, url, NULL, 0, INTERNET_FLAG_NO_UI,
 	                                         (DWORD_PTR)NULL);
+
+
 	if (!result)
 	{
 		const DWORD last_error = GetLastError();
-		InternetCloseHandle(inet);		
+		InternetCloseHandle(inet);
 		return last_error;
 	}
+
 
 	json_parser parser;
 

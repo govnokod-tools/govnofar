@@ -9,3 +9,4 @@ LIBRARY
 	 GetFindDataW
 	 FreeFindDataW
 	 ClosePanelW
+	 DeleteFilesW

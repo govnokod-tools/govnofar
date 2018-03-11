@@ -5,6 +5,24 @@
     <None Include="Source.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Govnokod.c" />
+    <Filter Include="Src">
+      <UniqueIdentifier>{1417057d-fa24-43ac-9f0e-ec07f672c00a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{94938f49-d448-492d-9945-88c77c6bed0b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Govnokod.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Inc\Settings.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
