@@ -18,7 +18,9 @@ FarSDK -- FarSDK
 
 Запускать через ALT+F1 или ALT+2.
 Смотреть текст F3 или F4. 
+F8 скрывает пользователя, сохраняя в БД "%LOCALAPPDATA%\Far manager\Profile\PluginsData"
+
 
 ![Govnokod](https://s10.postimg.org/4thsf8vx5/govn.png)
 
-![Govnokod2](https://s10.postimg.org/61nr1d3l5/govn2.png)
+![Govnokod2](https://s10.postimg.org/mtsd5uxtl/govnofar.png)
