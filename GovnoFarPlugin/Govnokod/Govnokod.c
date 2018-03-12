@@ -33,7 +33,7 @@ struct govno_panel
 struct user_data
 {
 	long user_id;
-	WCHAR description; //Array of WCHARs nullterminated (take its address to get string)
+	WCHAR full_description[]; //Array of WCHARs nullterminated
 };
 
 
@@ -254,7 +254,7 @@ intptr_t WINAPI GetFindDataW(struct GetFindDataInfo* info)
 		user_data->user_id = (p_panel->message_headers + i)->user_id;
 
 
-		memcpy_s(&(user_data->description), full_desc_len_bytes, (p_panel->message_headers + i)->message,
+		memcpy_s(user_data->full_description, full_desc_len_bytes, (p_panel->message_headers + i)->message,
 		         full_desc_len_bytes);
 		plugin_panel_item->UserData.FreeData = &CleanFullDesc;
 		plugin_panel_item->UserData.Data = user_data;
@@ -321,7 +321,7 @@ intptr_t WINAPI GetFilesW(struct GetFilesInfo* info)
 		const struct user_data* user_data = item.UserData.Data;
 
 
-		const WCHAR* const description = (const WCHAR* const)&(user_data->description);
+		const WCHAR* const description = user_data->full_description;
 		fwrite(description, sizeof(WCHAR), wcslen(description), file);
 
 		fclose(file);
